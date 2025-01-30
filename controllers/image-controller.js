@@ -95,11 +95,20 @@ const deleteImage = async (req, res) => {
     try {
         const imageId = req.params.id
 
+        const getUserId=req.userInfo.userId
+
         const getCurrentImageDetails = await Image.findById(imageId)
         if (!getCurrentImageDetails) {
             return res.status(404).json({
                 success: false,
                 message: `Image not found`
+            })
+        }
+
+        if(getCurrentImageDetails.uploadedBy.toString()!==getUserId){
+            return res.status(403).json({
+                success:false,
+                message:"You can not delete this image as you haven't uploaded it"
             })
         }
 
